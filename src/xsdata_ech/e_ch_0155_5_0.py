@@ -2,18 +2,18 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import List, Optional
 from xsdata.models.datatype import XmlDate, XmlDateTime, XmlTime
-from xsdata_ech.e_ch_0006_2_0 import ResidencePermitType
-from xsdata_ech.e_ch_0008_3_0 import CountryType
+from xsdata_ech.e_ch_0006_2_0 import ResidencePermitType as ResidencePermitType
+from xsdata_ech.e_ch_0008_3_0 import CountryType as CountryType
 from xsdata_ech.e_ch_0010_6_0 import (
-    AddressInformationType,
-    MrMrsType,
-    PersonMailAddressType,
-    SwissAddressInformationType,
+    AddressInformationType as AddressInformationType,
+    MrMrsType as MrMrsType,
+    PersonMailAddressType as PersonMailAddressType,
+    SwissAddressInformationType as SwissAddressInformationType,
 )
 from xsdata_ech.e_ch_0044_4_1 import (
-    DatePartiallyKnownType,
-    NamedPersonIdType,
-    SexType,
+    DatePartiallyKnownType as DatePartiallyKnownType,
+    NamedPersonIdType as NamedPersonIdType,
+    SexType as SexType,
 )
 
 __NAMESPACE__ = "http://www.ech.ch/xmlns/eCH-0155/5"
@@ -2123,31 +2123,3 @@ class ElectronicBallotType:
                     "max_length": 15,
                 }
             )
-
-
-@dataclass
-class ListType(ListType):
-    class Meta:
-        name = "list"
-        namespace = "http://www.ech.ch/xmlns/eCH-0155/5"
-
-
-@dataclass
-class Vote(VoteType):
-    class Meta:
-        name = "vote"
-        namespace = "http://www.ech.ch/xmlns/eCH-0155/5"
-
-
-@dataclass
-class VotingCard(VotingCardType):
-    class Meta:
-        name = "votingCard"
-        namespace = "http://www.ech.ch/xmlns/eCH-0155/5"
-
-
-@dataclass
-class ElectronicBallot(ElectronicBallotType):
-    class Meta:
-        name = "electronicBallot"
-        namespace = "http://www.ech.ch/xmlns/eCH-0155/5"

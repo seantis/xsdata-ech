@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
 from typing import List, Optional
-from xsdata_ech.e_ch_0058_5_0 import HeaderType
+from xsdata_ech.e_ch_0058_5_0 import HeaderType as HeaderType
 from xsdata_ech.e_ch_0155_5_0 import (
-    ContestType,
-    ElectronicBallotType,
-    ExtensionType,
-    VoteType,
+    ContestType as ContestType,
+    ElectronicBallotType as ElectronicBallotType,
+    ExtensionType as ExtensionType,
+    VoteType as VoteType,
 )
 
 __NAMESPACE__ = "http://www.ech.ch/xmlns/eCH-0159/5"

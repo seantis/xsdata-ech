@@ -6,10 +6,10 @@ from xsdata.models.datatype import XmlDate, XmlDateTime
 from xsdata_ech.e_ch_0044_4_1 import SexType
 from xsdata_ech.e_ch_0058_5_0 import HeaderType
 from xsdata_ech.e_ch_0155_5_0 import (
-    DomainOfInfluenceType,
-    DomainOfInfluenceTypeType,
-    ExtensionType,
-    VoterTypeType,
+    DomainOfInfluenceType as DomainOfInfluenceType,
+    DomainOfInfluenceTypeType as DomainOfInfluenceTypeType,
+    ExtensionType as ExtensionType,
+    VoterTypeType as VoterTypeType,
 )
 
 __NAMESPACE__ = "http://www.ech.ch/xmlns/eCH-0252/1"

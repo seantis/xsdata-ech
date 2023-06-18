@@ -1,5 +1,6 @@
 from decimal import Decimal
 from pytest import fixture
+from typing import Iterator
 from xsdata_ech.e_ch_0252_1_0 import (
     CountingCircleInfoType,
     CountingCircleType,
@@ -24,8 +25,11 @@ from xsdata.formats.dataclass.serializers.config import SerializerConfig
 from xsdata.models.datatype import XmlDate
 
 
+SubtotalInfo = CountOfVotersInformationType.SubtotalInfo
+
+
 @fixture()
-def delivery():
+def delivery() -> Iterator[Delivery]:
     yield Delivery(
         vote_base_delivery=EventVoteBaseDeliveryType(
             canton_id=1,
@@ -81,14 +85,18 @@ def delivery():
                                 counting_circle_name='Chur',
                             ),
                             result_data=ResultDataType(
-                                count_of_voters_information=CountOfVotersInformationType(
-                                    count_of_voters_total=100,
-                                    subtotal_info=[
-                                        CountOfVotersInformationType.SubtotalInfo(
-                                            count_of_voters=100,
-                                            voter_type=VoterTypeType.VALUE_2,
-                                        )
-                                    ]
+                                count_of_voters_information=(
+                                    CountOfVotersInformationType(
+                                        count_of_voters_total=100,
+                                        subtotal_info=[
+                                            SubtotalInfo(
+                                                count_of_voters=100,
+                                                voter_type=(
+                                                    VoterTypeType.VALUE_2
+                                                ),
+                                            )
+                                        ]
+                                    )
                                 ),
                                 fully_counted_true=True,
                                 voter_turnout=Decimal('10.03'),
@@ -109,22 +117,25 @@ def delivery():
     )
 
 
-def test_ech_0252(delivery):
+def test_ech_0252_xml(delivery: Delivery) -> None:
     # to xml
     config = SerializerConfig(pretty_print=True)
     serializer = XmlSerializer(config=config)
     xml = serializer.render(delivery)
 
+    # from xml
+    parser = XmlParser(context=XmlContext())
+    parsed: Delivery = parser.from_string(xml)
+    assert delivery == parsed
+
+
+def test_ech_0252_json(delivery: Delivery) -> None:
     # to json
+    config = SerializerConfig(pretty_print=True)
     serializer = JsonSerializer(config=config)
     json = serializer.render(delivery)
 
-    # from xml
-    parser = XmlParser(context=XmlContext())
-    parsed = parser.from_string(xml)
-    assert delivery == parsed
-
     # from json
     parser = JsonParser(context=XmlContext())
-    parsed = parser.from_string(json)
+    parsed: Delivery = parser.from_string(json)
     assert delivery == parsed
