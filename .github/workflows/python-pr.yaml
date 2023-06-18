@@ -1,4 +1,4 @@
-name: tests (pull_request)
+name: Tests (pull_request)
 
 on:
   pull_request:
