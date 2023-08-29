@@ -237,5 +237,6 @@ def test_ech_0159_json(delivery: Delivery) -> None:
     # FIXME: Some (inherited) classes seem to be sometimes parsed wrong
     # (Header instead of HeaderType, Contest instead of ContestType)
     parsed.delivery_header.__class__ = HeaderType
+    assert parsed.initial_delivery is not None
     parsed.initial_delivery.contest.__class__ = ContestType
     assert delivery == parsed
