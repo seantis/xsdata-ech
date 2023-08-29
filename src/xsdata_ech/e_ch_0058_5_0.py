@@ -7,15 +7,15 @@ __NAMESPACE__ = "http://www.ech.ch/xmlns/eCH-0058/5"
 
 
 class ActionType(Enum):
-    VALUE_1 = "1"
-    VALUE_3 = "3"
-    VALUE_4 = "4"
-    VALUE_5 = "5"
-    VALUE_6 = "6"
-    VALUE_8 = "8"
-    VALUE_9 = "9"
-    VALUE_10 = "10"
-    VALUE_12 = "12"
+    VALUE_1 = "1"  # neu (new)
+    VALUE_3 = "3"  # Widerruf (recall)
+    VALUE_4 = "4"  # Korrektur (correction)
+    VALUE_5 = "5"  # Anfrage (request)
+    VALUE_6 = "6"  # Antwort (response)
+    VALUE_8 = "8"  # negative Quittung (negativeReport)
+    VALUE_9 = "9"  # positive Quittung (positiveReport)
+    VALUE_10 = "10"  # Weiterleitung (forward)
+    VALUE_12 = "12"  # Mahnung (reminder)
 
 
 @dataclass
