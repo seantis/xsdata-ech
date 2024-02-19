@@ -1,7 +1,7 @@
 from decimal import Decimal
 from pytest import fixture
 from typing import Iterator
-from xsdata_ech.e_ch_0252_1_0 import (
+from xsdata_ech.e_ch_0252_2_0 import (
     CountingCircleInfoType,
     CountingCircleType,
     CountOfVotersInformationType,
@@ -32,13 +32,13 @@ SubtotalInfo = CountOfVotersInformationType.SubtotalInfo
 def delivery() -> Iterator[Delivery]:
     yield Delivery(
         vote_base_delivery=EventVoteBaseDeliveryType(
-            canton_id=1,
+            canton_id=18,
             polling_day=XmlDate(2023, 1, 1),
             vote_info=[
                 VoteInfoType(
                     vote=VoteType(
-                        vote_identification='external-id',
-                        main_vote_identification='external-id',
+                        vote_identification='vote-id',
+                        main_vote_identification='vote-id',
                         other_identification=[
                             NamedIdType(
                                 id_name='onegov',
@@ -49,7 +49,7 @@ def delivery() -> Iterator[Delivery]:
                             domain_of_influence_type=DomainOfInfluenceTypeType(
                                 DomainOfInfluenceTypeType.CT
                             ),
-                            domain_of_influence_identification='GR',
+                            domain_of_influence_identification='18',
                             domain_of_influence_name='Kanton Graubünden'
                         ),
                         polling_day=XmlDate(2023, 1, 1),
@@ -102,7 +102,7 @@ def delivery() -> Iterator[Delivery]:
                                 voter_turnout=Decimal('10.03'),
                                 received_votes=100,
                                 received_invalid_votes=100,
-                                received_blank_votes=100,
+                                received_empty_votes=100,
                                 received_valid_votes=100,
                                 count_of_yes_votes=100,
                                 count_of_no_votes=100,
@@ -117,7 +117,7 @@ def delivery() -> Iterator[Delivery]:
     )
 
 
-def test_ech_0252_xml(delivery: Delivery) -> None:
+def test_ech_0252_vote_xml(delivery: Delivery) -> None:
     # to xml
     config = SerializerConfig(pretty_print=True)
     serializer = XmlSerializer(config=config)
@@ -129,7 +129,7 @@ def test_ech_0252_xml(delivery: Delivery) -> None:
     assert delivery == parsed
 
 
-def test_ech_0252_json(delivery: Delivery) -> None:
+def test_ech_0252_vote_json(delivery: Delivery) -> None:
     # to json
     config = SerializerConfig(pretty_print=True)
     serializer = JsonSerializer(config=config)

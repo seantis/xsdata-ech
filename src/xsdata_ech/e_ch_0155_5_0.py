@@ -528,8 +528,8 @@ class ListDescriptionInformationType:
 
 
 class ListRelationType(Enum):
-    VALUE_1 = 1
-    VALUE_2 = 2
+    VALUE_1 = 1  # Listenverbindung
+    VALUE_2 = 2  # Unterlistenverbindung
 
 
 @dataclass
@@ -806,8 +806,8 @@ class TieBreakQuestionType:
 
 
 class TypeOfElectionType(Enum):
-    VALUE_1 = 1
-    VALUE_2 = 2
+    VALUE_1 = 1  # Proporz
+    VALUE_2 = 2  # Majorz
 
 
 @dataclass
