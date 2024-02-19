@@ -2,7 +2,7 @@
 <!-- edited with XMLSpy v2012 rel. 2 sp1 (http://www.altova.com) by Martin Stingelin (Stingelin Informatik GmbH) -->
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:eCH-0252="http://www.ech.ch/xmlns/eCH-0252/2" xmlns:eCH-0058="http://www.ech.ch/xmlns/eCH-0058/5" xmlns:eCH-0155="http://www.ech.ch/xmlns/eCH-0155/5" xmlns:eCH-0007="http://www.ech.ch/xmlns/eCH-0007/6" xmlns:eCH-0044="http://www.ech.ch/xmlns/eCH-0044/4" targetNamespace="http://www.ech.ch/xmlns/eCH-0252/2" elementFormDefault="qualified" attributeFormDefault="unqualified" version="2.0">
 	<xs:annotation>
-		<xs:documentation>Ausgabedatum: 11.11.2022</xs:documentation>
+		<xs:documentation>Ausgabedatum: 27.07.2023</xs:documentation>
 	</xs:annotation>
 	<xs:import namespace="http://www.ech.ch/xmlns/eCH-0058/5" schemaLocation="http://www.ech.ch/xmlns/eCH-0058/5/eCH-0058-5-0.xsd"/>
 	<xs:import namespace="http://www.ech.ch/xmlns/eCH-0155/5" schemaLocation="http://www.ech.ch/xmlns/eCH-0155/5/eCH-0155-5-0.xsd"/>
@@ -200,20 +200,21 @@
 			<xs:element name="countOfVotingCardsReceivedInBallotbox" type="eCH-0252:countOfType" minOccurs="0"/>
 			<xs:element name="countOfVotingCardsReceivedPrematurelyInBallotbox" type="eCH-0252:countOfType" minOccurs="0"/>
 			<xs:element name="countOfVotingCardsReceivedByMail" type="eCH-0252:countOfType" minOccurs="0"/>
+			<xs:element name="countOfInvalidVotingCardsReceivedByMail" type="eCH-0252:countOfType" minOccurs="0"/>
 			<xs:element name="countOfVotingCardsReceivedByEvoting" type="eCH-0252:countOfType" minOccurs="0"/>
 		</xs:sequence>
 	</xs:complexType>
 	<xs:complexType name="resultDataType">
 		<xs:sequence>
 			<xs:element name="countOfVotersInformation" type="eCH-0252:countOfVotersInformationType"/>
-			<xs:element name="votingCardInformationType" type="eCH-0252:votingCardInformationType" minOccurs="0"/>
+			<xs:element name="votingCardInformation" type="eCH-0252:votingCardInformationType" minOccurs="0"/>
 			<xs:element name="fullyCountedTrue" type="eCH-0252:fullyCountedTrue"/>
 			<xs:element name="releasedTimestamp" type="eCH-0252:releasedTimestampType" minOccurs="0"/>
 			<xs:element name="lockoutTimestamp" type="eCH-0252:lockoutTimestampType" minOccurs="0"/>
 			<xs:element name="voterTurnout" type="eCH-0252:percentType" minOccurs="0"/>
 			<xs:element name="receivedVotes" type="eCH-0252:countOfType"/>
 			<xs:element name="receivedInvalidVotes" type="eCH-0252:countOfType"/>
-			<xs:element name="receivedBlankVotes" type="eCH-0252:countOfType"/>
+			<xs:element name="receivedEmptyVotes" type="eCH-0252:countOfType"/>
 			<xs:element name="receivedValidVotes" type="eCH-0252:countOfType"/>
 			<xs:element name="countOfYesVotes" type="eCH-0252:countOfType"/>
 			<xs:element name="countOfNoVotes" type="eCH-0252:countOfType"/>
@@ -480,7 +481,7 @@
 			<xs:extension base="eCH-0155:candidateType">
 				<xs:sequence>
 					<xs:element name="politicalFamilyName" type="eCH-0044:baseNameType" minOccurs="0"/>
-					<xs:element name="politicalFirsName" type="eCH-0044:baseNameType" minOccurs="0"/>
+					<xs:element name="politicalFirstName" type="eCH-0044:baseNameType" minOccurs="0"/>
 				</xs:sequence>
 			</xs:extension>
 		</xs:complexContent>
