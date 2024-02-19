@@ -18,7 +18,7 @@ Run the tests
 Releasing
 ---------
 
-Bump version
+Make sure, all recent changes are in HISTORY.md. Then bump the version:
 
     pip install .[dev]
     bump2version {major|minor|patch}
