@@ -22,6 +22,9 @@ Bump version
 
     pip install .[dev]
     bump2version {major|minor|patch}
+    git push && git push --tags
+
+Then create a new release on GitHub using the new tag.
 
 Update definitions
 ------------------
