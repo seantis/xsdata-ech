@@ -1,5 +1,7 @@
 History
 =======
+0.3.0 (21.08.2024)
+------------------
 
 - Add support for Python 3.13.
 - Drop support for Python 3.7.
