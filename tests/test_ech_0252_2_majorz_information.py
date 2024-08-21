@@ -25,8 +25,8 @@ from xsdata.models.datatype import XmlDate
 SubtotalInfo = CountOfVotersInformationType.SubtotalInfo
 ElectionGroup = ElectionGroupInfoType.ElectionGroup
 ElectionInformation = ElectionGroup.ElectionInformation
-ElectionDescriptionInfo = \
-    ElectionDescriptionInformationType.ElectionDescriptionInfo
+ElectionDescriptionInfo = (
+    ElectionDescriptionInformationType.ElectionDescriptionInfo)
 
 
 @fixture()

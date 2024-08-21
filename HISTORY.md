@@ -1,5 +1,9 @@
 History
 =======
+
+- Add support for Python 3.13.
+- Drop support for Python 3.7.
+
 0.2.0 (19.02.2024)
 ------------------
 

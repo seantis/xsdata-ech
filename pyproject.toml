@@ -4,6 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.mypy]
 strict = true
+python_version = 3.8
 
 [[tool.mypy.overrides]]
 module = "tests"
@@ -18,14 +19,16 @@ exclude_dirs = [
 legacy_tox_ini = """
 [tox]
 isolated_build = True
-envlist = py37,py38,py39,py310,lint,bandit,mypy
+envlist = py38,py39,py310,py311,py312,py313,lint,bandit,mypy
 
 [gh-actions]
 python =
-    3.7: py37
     3.8: py38
     3.9: py39
-    3.10: py310,lint,bandit,mypy
+    3.10: py310
+    3.11: py311,lint,bandit,mypy
+    3.12: py312
+    3.13: py313
 
 [testenv]
 deps =
@@ -33,20 +36,20 @@ deps =
 commands = py.test
 
 [testenv:lint]
-basepython = python3.10
+basepython = python3.11
 deps =
     flake8
 commands = flake8 src/ tests/
 
 [testenv:mypy]
-basepython = python3.10
+basepython = python3.11
 deps =
     mypy
     pytest>=7
 commands = mypy src tests
 
 [testenv:bandit]
-basepython = python3.10
+basepython = python3.11
 deps =
     bandit[toml]
 commands = bandit -c pyproject.toml -r src/
