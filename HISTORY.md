@@ -1,5 +1,7 @@
 History
 =======
+- Update to official eCH-0252 v2.0.0 and eCH-0155 v5.2 schemas
+
 0.3.0 (21.08.2024)
 ------------------
 

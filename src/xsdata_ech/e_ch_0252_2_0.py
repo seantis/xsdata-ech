@@ -1,118 +1,144 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from decimal import Decimal
 from enum import Enum
-from typing import List, Optional
+
 from xsdata.models.datatype import XmlDate, XmlDateTime
-from xsdata_ech.e_ch_0044_4_1 import SexType as SexType
-from xsdata_ech.e_ch_0058_5_0 import HeaderType as HeaderType
-from xsdata_ech.e_ch_0155_5_0 import (
-    CandidateType as ECh015550CandidateType,
-    DomainOfInfluenceType as DomainOfInfluenceType,
-    DomainOfInfluenceTypeType as DomainOfInfluenceTypeType,
-    ElectionType as ElectionType,
-    ExtensionType as ExtensionType,
-    ListType as ListType,
-    ListUnionType as ListUnionType,
-    VoterTypeType as VoterTypeType,
+
+from xsdata_ech.e_ch_0044_4_1 import SexType
+from xsdata_ech.e_ch_0058_5_0 import HeaderType
+from xsdata_ech.e_ch_0155_5_2 import (
+    CandidateType,
+    DomainOfInfluenceType,
+    DomainOfInfluenceTypeType,
+    ElectionType,
+    ExtensionType,
+    ListType,
+    ListUnionType,
+    VoterTypeType,
 )
 
 __NAMESPACE__ = "http://www.ech.ch/xmlns/eCH-0252/2"
 
 
-@dataclass
+@dataclass(kw_only=True)
 class CandidateListResultType:
     class Meta:
         name = "candidateListResultType"
 
-    list_identification: Optional[str] = field(
+    list_identification: str = field(
+        metadata={
+            "name": "listIdentification",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_length": 1,
+            "max_length": 50,
+        }
+    )
+    count_of_votes_from_changed_ballots: int = field(
+        metadata={
+            "name": "countOfVotesFromChangedBallots",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_inclusive": 0,
+            "max_inclusive": 9999999,
+        }
+    )
+
+
+class DecisiveMajorityType(Enum):
+    VALUE_1 = 1
+    VALUE_2 = 2
+    VALUE_3 = 3
+    VALUE_4 = 4
+    VALUE_5 = 5
+
+
+@dataclass(kw_only=True)
+class ElectionAssociationDescriptionInformationType:
+    class Meta:
+        name = "electionAssociationDescriptionInformationType"
+
+    language: str = field(
+        metadata={
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "length": 2,
+        }
+    )
+    election_association_description_short: None | str = field(
+        default=None,
+        metadata={
+            "name": "electionAssociationDescriptionShort",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_length": 1,
+            "max_length": 100,
+        },
+    )
+    election_association_description: str = field(
+        metadata={
+            "name": "electionAssociationDescription",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_length": 1,
+            "max_length": 255,
+        }
+    )
+
+
+@dataclass(kw_only=True)
+class ListOrListUnionIdentificationType:
+    class Meta:
+        name = "listOrListUnionIdentificationType"
+
+    list_identification: None | str = field(
         default=None,
         metadata={
             "name": "listIdentification",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_length": 1,
             "max_length": 50,
         },
     )
-    count_of_votes_from_changed_ballots: Optional[int] = field(
+    list_union_identification: None | str = field(
         default=None,
         metadata={
-            "name": "countOfVotesFromChangedBallots",
+            "name": "listUnionIdentification",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_inclusive": 0,
-            "max_inclusive": 9999999,
-        },
-    )
-
-
-class DecisiveMajorityType(Enum):
-    VALUE_1 = 1  # Mehrheit der Stimmen
-    VALUE_2 = 2  # Mehrheit der Gemeinden
-    VALUE_3 = 3  # Alle Gemeinden / einstimmig
-    VALUE_4 = 4  # Mehrheit der Stimmen und der Gemeinden
-    VALUE_5 = 5  # Volks- und Ständemehr
-
-
-@dataclass
-class ElectionAssociationType:
-    class Meta:
-        name = "electionAssociationType"
-
-    election_association_id: Optional[str] = field(
-        default=None,
-        metadata={
-            "name": "electionAssociationId",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_length": 1,
             "max_length": 50,
         },
     )
-    election_association_name: Optional[str] = field(
-        default=None,
-        metadata={
-            "name": "electionAssociationName",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_length": 1,
-            "max_length": 255,
-        },
-    )
-    quorum: Optional[Decimal] = field(
-        default=None,
-        metadata={
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "min_inclusive": Decimal("0.00"),
-            "max_inclusive": Decimal("100.00"),
-            "total_digits": 5,
-            "fraction_digits": 2,
-        },
-    )
 
 
-@dataclass
+class MandateTypeTypeMandateTypeFix(Enum):
+    VALUE_1 = 1
+    VALUE_2 = 2
+
+
+class MandateTypeTypeMandateTypeOther(Enum):
+    VALUE_3 = 3
+
+
+@dataclass(kw_only=True)
 class NamedElementType:
     class Meta:
         name = "namedElementType"
 
-    element_name: Optional[str] = field(
-        default=None,
+    element_name: str = field(
         metadata={
             "name": "elementName",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_length": 1,
             "max_length": 100,
-        },
+        }
     )
-    count_of: Optional[int] = field(
+    count_of: None | int = field(
         default=None,
         metadata={
             "name": "countOf",
@@ -122,7 +148,7 @@ class NamedElementType:
             "max_inclusive": 9999999,
         },
     )
-    percent: Optional[Decimal] = field(
+    percent: None | Decimal = field(
         default=None,
         metadata={
             "type": "Element",
@@ -133,7 +159,7 @@ class NamedElementType:
             "fraction_digits": 2,
         },
     )
-    text: Optional[str] = field(
+    text: None | str = field(
         default=None,
         metadata={
             "type": "Element",
@@ -142,33 +168,36 @@ class NamedElementType:
             "max_length": 500,
         },
     )
+    decimal: None | Decimal = field(
+        default=None,
+        metadata={
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        },
+    )
 
 
-@dataclass
+@dataclass(kw_only=True)
 class NamedIdType:
     class Meta:
         name = "namedIdType"
 
-    id_name: Optional[str] = field(
-        default=None,
+    id_name: str = field(
         metadata={
             "name": "idName",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_length": 1,
             "max_length": 20,
-        },
+        }
     )
-    id: Optional[str] = field(
-        default=None,
+    id: str = field(
         metadata={
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_length": 1,
             "max_length": 50,
-        },
+        }
     )
 
 
@@ -181,32 +210,28 @@ class VoteSubTypeType(Enum):
     VALUE_6 = 6
 
 
-@dataclass
+@dataclass(kw_only=True)
 class VoteTitleInformationType:
     class Meta:
         name = "voteTitleInformationType"
 
-    language: Optional[str] = field(
-        default=None,
+    language: str = field(
         metadata={
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "length": 2,
-        },
+        }
     )
-    vote_title: Optional[str] = field(
-        default=None,
+    vote_title: str = field(
         metadata={
             "name": "voteTitle",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_length": 1,
             "max_length": 700,
-        },
+        }
     )
-    vote_title_short: Optional[str] = field(
+    vote_title_short: None | str = field(
         default=None,
         metadata={
             "name": "voteTitleShort",
@@ -218,34 +243,34 @@ class VoteTitleInformationType:
     )
 
 
-@dataclass
+@dataclass(kw_only=True)
 class VotingCardInformationType:
     class Meta:
         name = "votingCardInformationType"
 
-    count_of_voting_cards_received_in_ballotbox: Optional[int] = field(
+    count_of_voting_cards_received_in_ballot_box: None | int = field(
         default=None,
         metadata={
-            "name": "countOfVotingCardsReceivedInBallotbox",
+            "name": "countOfVotingCardsReceivedInBallotBox",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
             "min_inclusive": 0,
             "max_inclusive": 9999999,
         },
     )
-    count_of_voting_cards_received_prematurely_in_ballotbox: Optional[
-        int
-    ] = field(
-        default=None,
-        metadata={
-            "name": "countOfVotingCardsReceivedPrematurelyInBallotbox",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "min_inclusive": 0,
-            "max_inclusive": 9999999,
-        },
+    count_of_voting_cards_received_prematurely_in_ballot_box: None | int = (
+        field(
+            default=None,
+            metadata={
+                "name": "countOfVotingCardsReceivedPrematurelyInBallotBox",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_inclusive": 0,
+                "max_inclusive": 9999999,
+            },
+        )
     )
-    count_of_voting_cards_received_by_mail: Optional[int] = field(
+    count_of_voting_cards_received_by_mail: None | int = field(
         default=None,
         metadata={
             "name": "countOfVotingCardsReceivedByMail",
@@ -255,7 +280,7 @@ class VotingCardInformationType:
             "max_inclusive": 9999999,
         },
     )
-    count_of_invalid_voting_cards_received_by_mail: Optional[int] = field(
+    count_of_invalid_voting_cards_received_by_mail: None | int = field(
         default=None,
         metadata={
             "name": "countOfInvalidVotingCardsReceivedByMail",
@@ -265,7 +290,7 @@ class VotingCardInformationType:
             "max_inclusive": 9999999,
         },
     )
-    count_of_voting_cards_received_by_evoting: Optional[int] = field(
+    count_of_voting_cards_received_by_evoting: None | int = field(
         default=None,
         metadata={
             "name": "countOfVotingCardsReceivedByEvoting",
@@ -277,112 +302,56 @@ class VotingCardInformationType:
     )
 
 
-@dataclass
-class CandidateResultType:
+@dataclass(kw_only=True)
+class CandidateOrWriteInCandidateType:
     class Meta:
-        name = "candidateResultType"
+        name = "candidateOrWriteInCandidateType"
 
-    candidate_identification: Optional[str] = field(
+    candidate_identification: None | str = field(
         default=None,
         metadata={
             "name": "candidateIdentification",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_length": 1,
             "max_length": 50,
         },
     )
-    count_of_votes_total: Optional[int] = field(
+    candidate_reference: None | str = field(
         default=None,
         metadata={
-            "name": "countOfVotesTotal",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_inclusive": 0,
-            "max_inclusive": 9999999,
-        },
-    )
-    candidate_list_results_info: Optional[
-        "CandidateResultType.CandidateListResultsInfo"
-    ] = field(
-        default=None,
-        metadata={
-            "name": "candidateListResultsInfo",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-        },
-    )
-
-    @dataclass
-    class CandidateListResultsInfo:
-        candidate_list_results: List[CandidateListResultType] = field(
-            default_factory=list,
-            metadata={
-                "name": "candidateListResults",
-                "type": "Element",
-                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            },
-        )
-        count_of_votes_from_ballots_without_list_designation: Optional[
-            int
-        ] = field(
-            default=None,
-            metadata={
-                "name": "countOfVotesFromBallotsWithoutListDesignation",
-                "type": "Element",
-                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "min_inclusive": 0,
-                "max_inclusive": 9999999,
-            },
-        )
-
-
-@dataclass
-class CandidateType(ECh015550CandidateType):
-    class Meta:
-        name = "candidateType"
-
-    political_family_name: Optional[str] = field(
-        default=None,
-        metadata={
-            "name": "politicalFamilyName",
+            "name": "candidateReference",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
             "min_length": 1,
-            "max_length": 100,
+            "max_length": 10,
         },
     )
-    political_first_name: Optional[str] = field(
+    write_in_candidate: None | CandidateType = field(
         default=None,
         metadata={
-            "name": "politicalFirstName",
+            "name": "writeInCandidate",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "min_length": 1,
-            "max_length": 100,
         },
     )
 
 
-@dataclass
+@dataclass(kw_only=True)
 class CountOfVotersInformationType:
     class Meta:
         name = "countOfVotersInformationType"
 
-    count_of_voters_total: Optional[int] = field(
-        default=None,
+    count_of_voters_total: int = field(
         metadata={
             "name": "countOfVotersTotal",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_inclusive": 0,
             "max_inclusive": 9999999,
-        },
+        }
     )
-    subtotal_info: List["CountOfVotersInformationType.SubtotalInfo"] = field(
+    subtotal_info: list[CountOfVotersInformationType.SubtotalInfo] = field(
         default_factory=list,
         metadata={
             "name": "subtotalInfo",
@@ -391,20 +360,18 @@ class CountOfVotersInformationType:
         },
     )
 
-    @dataclass
+    @dataclass(kw_only=True)
     class SubtotalInfo:
-        count_of_voters: Optional[int] = field(
-            default=None,
+        count_of_voters: int = field(
             metadata={
                 "name": "countOfVoters",
                 "type": "Element",
                 "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "required": True,
                 "min_inclusive": 0,
                 "max_inclusive": 9999999,
-            },
+            }
         )
-        voter_type: Optional[VoterTypeType] = field(
+        voter_type: None | VoterTypeType = field(
             default=None,
             metadata={
                 "name": "voterType",
@@ -412,21 +379,37 @@ class CountOfVotersInformationType:
                 "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
             },
         )
-        sex: Optional[SexType] = field(
+        sex: None | SexType = field(
             default=None,
             metadata={
                 "type": "Element",
                 "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
             },
         )
+        is_minor: None | bool = field(
+            default=None,
+            metadata={
+                "name": "isMinor",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+        named_element: list[NamedElementType] = field(
+            default_factory=list,
+            metadata={
+                "name": "namedElement",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
 
 
-@dataclass
+@dataclass(kw_only=True)
 class CountingCircleType:
     class Meta:
         name = "countingCircleType"
 
-    counting_circle_id: Optional[str] = field(
+    counting_circle_id: None | str = field(
         default=None,
         metadata={
             "name": "countingCircleId",
@@ -436,7 +419,7 @@ class CountingCircleType:
             "max_length": 50,
         },
     )
-    counting_circle_name: Optional[str] = field(
+    counting_circle_name: None | str = field(
         default=None,
         metadata={
             "name": "countingCircleName",
@@ -446,7 +429,7 @@ class CountingCircleType:
             "max_length": 100,
         },
     )
-    domain_of_influence_type: Optional[DomainOfInfluenceTypeType] = field(
+    domain_of_influence_type: None | DomainOfInfluenceTypeType = field(
         default=None,
         metadata={
             "name": "domainOfInfluenceType",
@@ -456,239 +439,43 @@ class CountingCircleType:
     )
 
 
-@dataclass
-class ElectedType:
+@dataclass(kw_only=True)
+class ElectionAssociationType:
     class Meta:
-        name = "electedType"
+        name = "electionAssociationType"
 
-    majoral_election: Optional["ElectedType.MajoralElection"] = field(
-        default=None,
+    election_association_id: str = field(
         metadata={
-            "name": "majoralElection",
+            "name": "electionAssociationId",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-        },
-    )
-    proportional_election: Optional[
-        "ElectedType.ProportionalElection"
-    ] = field(
-        default=None,
-        metadata={
-            "name": "proportionalElection",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-        },
-    )
-
-    @dataclass
-    class MajoralElection:
-        absolute_majority: Optional[int] = field(
-            default=None,
-            metadata={
-                "name": "absoluteMajority",
-                "type": "Element",
-                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "min_inclusive": 0,
-                "max_inclusive": 9999999,
-            },
-        )
-        elected_candidate: List[
-            "ElectedType.MajoralElection.ElectedCandidate"
-        ] = field(
-            default_factory=list,
-            metadata={
-                "name": "electedCandidate",
-                "type": "Element",
-                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            },
-        )
-
-        @dataclass
-        class ElectedCandidate:
-            candidate_identification: Optional[str] = field(
-                default=None,
-                metadata={
-                    "name": "candidateIdentification",
-                    "type": "Element",
-                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                    "required": True,
-                    "min_length": 1,
-                    "max_length": 50,
-                },
-            )
-            elected_by_draw: Optional[bool] = field(
-                default=None,
-                metadata={
-                    "name": "electedByDraw",
-                    "type": "Element",
-                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                },
-            )
-            named_element: List[NamedElementType] = field(
-                default_factory=list,
-                metadata={
-                    "name": "namedElement",
-                    "type": "Element",
-                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                },
-            )
-
-    @dataclass
-    class ProportionalElection:
-        list_value: List["ElectedType.ProportionalElection.ListType"] = field(
-            default_factory=list,
-            metadata={
-                "name": "list",
-                "type": "Element",
-                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "min_occurs": 1,
-            },
-        )
-
-        @dataclass
-        class ListType:
-            list_identification: Optional[str] = field(
-                default=None,
-                metadata={
-                    "name": "listIdentification",
-                    "type": "Element",
-                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                    "required": True,
-                    "min_length": 1,
-                    "max_length": 50,
-                },
-            )
-            elected_candidate: List[
-                "ElectedType.ProportionalElection.ListType.ElectedCandidate"
-            ] = field(
-                default_factory=list,
-                metadata={
-                    "name": "electedCandidate",
-                    "type": "Element",
-                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                },
-            )
-            count_of_seats_gained: Optional[int] = field(
-                default=None,
-                metadata={
-                    "name": "countOfSeatsGained",
-                    "type": "Element",
-                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                    "required": True,
-                    "min_inclusive": 0,
-                    "max_inclusive": 9999999,
-                },
-            )
-            named_element: List[NamedElementType] = field(
-                default_factory=list,
-                metadata={
-                    "name": "namedElement",
-                    "type": "Element",
-                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                },
-            )
-
-            @dataclass
-            class ElectedCandidate:
-                candidate_identification: Optional[str] = field(
-                    default=None,
-                    metadata={
-                        "name": "candidateIdentification",
-                        "type": "Element",
-                        "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                        "required": True,
-                        "min_length": 1,
-                        "max_length": 50,
-                    },
-                )
-                elected_by_draw: Optional[bool] = field(
-                    default=None,
-                    metadata={
-                        "name": "electedByDraw",
-                        "type": "Element",
-                        "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                    },
-                )
-                named_element: List[NamedElementType] = field(
-                    default_factory=list,
-                    metadata={
-                        "name": "namedElement",
-                        "type": "Element",
-                        "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                    },
-                )
-
-
-@dataclass
-class ListResultType:
-    class Meta:
-        name = "listResultType"
-
-    list_identification: Optional[str] = field(
-        default=None,
-        metadata={
-            "name": "listIdentification",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_length": 1,
             "max_length": 50,
-        },
+        }
     )
-    count_of_changed_ballots: Optional[int] = field(
-        default=None,
-        metadata={
-            "name": "countOfChangedBallots",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_inclusive": 0,
-            "max_inclusive": 9999999,
-        },
-    )
-    count_of_unchanged_ballots: Optional[int] = field(
-        default=None,
-        metadata={
-            "name": "countOfUnchangedBallots",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_inclusive": 0,
-            "max_inclusive": 9999999,
-        },
-    )
-    count_of_candidate_votes: Optional[int] = field(
-        default=None,
-        metadata={
-            "name": "countOfCandidateVotes",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_inclusive": 0,
-            "max_inclusive": 9999999,
-        },
-    )
-    count_of_additional_votes: Optional[int] = field(
-        default=None,
-        metadata={
-            "name": "countOfAdditionalVotes",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_inclusive": 0,
-            "max_inclusive": 9999999,
-        },
-    )
-    candidate_results: List["ListResultType.CandidateResults"] = field(
+    election_association_description: list[
+        ElectionAssociationDescriptionInformationType
+    ] = field(
         default_factory=list,
         metadata={
-            "name": "candidateResults",
+            "name": "electionAssociationDescription",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
             "min_occurs": 1,
         },
     )
-    named_element: List[NamedElementType] = field(
+    quorum: None | Decimal = field(
+        default=None,
+        metadata={
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_inclusive": Decimal("0.00"),
+            "max_inclusive": Decimal("100.00"),
+            "total_digits": 5,
+            "fraction_digits": 2,
+        },
+    )
+    named_element: list[NamedElementType] = field(
         default_factory=list,
         metadata={
             "name": "namedElement",
@@ -697,44 +484,139 @@ class ListResultType:
         },
     )
 
-    @dataclass
+
+@dataclass(kw_only=True)
+class ListResultType:
+    class Meta:
+        name = "listResultType"
+
+    list_identification: str = field(
+        metadata={
+            "name": "listIdentification",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_length": 1,
+            "max_length": 50,
+        }
+    )
+    list_indenture_number: None | str = field(
+        default=None,
+        metadata={
+            "name": "listIndentureNumber",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_length": 1,
+            "max_length": 6,
+        },
+    )
+    count_of_changed_ballots: int = field(
+        metadata={
+            "name": "countOfChangedBallots",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_inclusive": 0,
+            "max_inclusive": 9999999,
+        }
+    )
+    count_of_unchanged_ballots: int = field(
+        metadata={
+            "name": "countOfUnchangedBallots",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_inclusive": 0,
+            "max_inclusive": 9999999,
+        }
+    )
+    count_of_candidate_votes: int = field(
+        metadata={
+            "name": "countOfCandidateVotes",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_inclusive": 0,
+            "max_inclusive": 9999999,
+        }
+    )
+    count_of_additional_votes: int = field(
+        metadata={
+            "name": "countOfAdditionalVotes",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_inclusive": 0,
+            "max_inclusive": 9999999,
+        }
+    )
+    candidate_results: list[ListResultType.CandidateResults] = field(
+        default_factory=list,
+        metadata={
+            "name": "candidateResults",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_occurs": 1,
+        },
+    )
+    named_element: list[NamedElementType] = field(
+        default_factory=list,
+        metadata={
+            "name": "namedElement",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        },
+    )
+
+    @dataclass(kw_only=True)
     class CandidateResults:
-        candidate_identification: Optional[str] = field(
-            default=None,
+        """
+        :ivar candidate_identification:
+        :ivar candidate_reference_on_position:
+        :ivar count_of_votes_from_changed_ballots:
+        :ivar count_of_votes_from_unchanged_ballots:
+        :ivar candidate_list_results_info: The element is only
+            transmitted if this has been agreed by the sender and
+            recipient. Once it has been used, it must always be
+            transmitted.
+        :ivar named_element:
+        """
+
+        candidate_identification: str = field(
             metadata={
                 "name": "candidateIdentification",
                 "type": "Element",
                 "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "required": True,
                 "min_length": 1,
                 "max_length": 50,
+            }
+        )
+        candidate_reference_on_position: list[str] = field(
+            default_factory=list,
+            metadata={
+                "name": "candidateReferenceOnPosition",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_length": 1,
+                "max_length": 10,
             },
         )
-        count_of_votes_from_changed_ballots: Optional[int] = field(
-            default=None,
+        count_of_votes_from_changed_ballots: int = field(
             metadata={
                 "name": "countOfVotesFromChangedBallots",
                 "type": "Element",
                 "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "required": True,
                 "min_inclusive": 0,
                 "max_inclusive": 9999999,
-            },
+            }
         )
-        count_of_votes_from_unchanged_ballots: Optional[int] = field(
-            default=None,
+        count_of_votes_from_unchanged_ballots: int = field(
             metadata={
                 "name": "countOfVotesFromUnchangedBallots",
                 "type": "Element",
                 "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "required": True,
                 "min_inclusive": 0,
                 "max_inclusive": 9999999,
-            },
+            }
         )
-        candidate_list_results_info: Optional[
-            "ListResultType.CandidateResults.CandidateListResultsInfo"
-        ] = field(
+        candidate_list_results_info: (
+            None | ListResultType.CandidateResults.CandidateListResultsInfo
+        ) = field(
             default=None,
             metadata={
                 "name": "candidateListResultsInfo",
@@ -742,7 +624,7 @@ class ListResultType:
                 "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
             },
         )
-        named_element: List[NamedElementType] = field(
+        named_element: list[NamedElementType] = field(
             default_factory=list,
             metadata={
                 "name": "namedElement",
@@ -751,9 +633,9 @@ class ListResultType:
             },
         )
 
-        @dataclass
+        @dataclass(kw_only=True)
         class CandidateListResultsInfo:
-            candidate_list_results: List[CandidateListResultType] = field(
+            candidate_list_results: list[CandidateListResultType] = field(
                 default_factory=list,
                 metadata={
                     "name": "candidateListResults",
@@ -761,9 +643,9 @@ class ListResultType:
                     "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
                 },
             )
-            count_of_votes_from_ballots_without_list_designation: Optional[
-                int
-            ] = field(
+            count_of_votes_from_ballots_without_list_designation: (
+                None | int
+            ) = field(
                 default=None,
                 metadata={
                     "name": "countOfVotesFromBallotsWithoutListDesignation",
@@ -773,7 +655,7 @@ class ListResultType:
                     "max_inclusive": 9999999,
                 },
             )
-            named_element: List[NamedElementType] = field(
+            named_element: list[NamedElementType] = field(
                 default_factory=list,
                 metadata={
                     "name": "namedElement",
@@ -783,23 +665,106 @@ class ListResultType:
             )
 
 
-@dataclass
+@dataclass(kw_only=True)
+class MandateTypeType:
+    class Meta:
+        name = "mandateTypeType"
+
+    mandate_type_fix: None | MandateTypeTypeMandateTypeFix = field(
+        default=None,
+        metadata={
+            "name": "mandateTypeFix",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        },
+    )
+    mandate_type_other: None | MandateTypeTypeMandateTypeOther = field(
+        default=None,
+        metadata={
+            "name": "mandateTypeOther",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        },
+    )
+    mandate_type_info: list[MandateTypeType.MandateTypeInfo] = field(
+        default_factory=list,
+        metadata={
+            "name": "mandateTypeInfo",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        },
+    )
+
+    @dataclass(kw_only=True)
+    class MandateTypeInfo:
+        language: str = field(
+            metadata={
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            }
+        )
+        mandate_type_description: None | object = field(
+            default=None,
+            metadata={
+                "name": "mandateTypeDescription",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+
+
+@dataclass(kw_only=True)
+class VoteResultDataType:
+    class Meta:
+        name = "voteResultDataType"
+
+    percent_of_yes_votes: Decimal = field(
+        metadata={
+            "name": "percentOfYesVotes",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_inclusive": Decimal("0.00"),
+            "max_inclusive": Decimal("100.00"),
+            "total_digits": 5,
+            "fraction_digits": 2,
+        }
+    )
+    percent_of_no_votes: Decimal = field(
+        metadata={
+            "name": "percentOfNoVotes",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_inclusive": Decimal("0.00"),
+            "max_inclusive": Decimal("100.00"),
+            "total_digits": 5,
+            "fraction_digits": 2,
+        }
+    )
+    named_element: list[NamedElementType] = field(
+        default_factory=list,
+        metadata={
+            "name": "namedElement",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        },
+    )
+
+
+@dataclass(kw_only=True)
 class VoteType:
     class Meta:
         name = "voteType"
 
-    vote_identification: Optional[str] = field(
-        default=None,
+    vote_identification: str = field(
         metadata={
             "name": "voteIdentification",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_length": 1,
             "max_length": 50,
-        },
+        }
     )
-    main_vote_identification: Optional[str] = field(
+    main_vote_identification: None | str = field(
         default=None,
         metadata={
             "name": "mainVoteIdentification",
@@ -809,7 +774,7 @@ class VoteType:
             "max_length": 50,
         },
     )
-    other_identification: List[NamedIdType] = field(
+    other_identification: list[NamedIdType] = field(
         default_factory=list,
         metadata={
             "name": "otherIdentification",
@@ -817,16 +782,14 @@ class VoteType:
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
         },
     )
-    domain_of_influence: Optional[DomainOfInfluenceType] = field(
-        default=None,
+    domain_of_influence: DomainOfInfluenceType = field(
         metadata={
             "name": "domainOfInfluence",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
+        }
     )
-    superior_authority: Optional[DomainOfInfluenceType] = field(
+    superior_authority: None | DomainOfInfluenceType = field(
         default=None,
         metadata={
             "name": "superiorAuthority",
@@ -834,16 +797,14 @@ class VoteType:
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
         },
     )
-    polling_day: Optional[XmlDate] = field(
-        default=None,
+    polling_day: XmlDate = field(
         metadata={
             "name": "pollingDay",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
+        }
     )
-    vote_title_information: List[VoteTitleInformationType] = field(
+    vote_title_information: list[VoteTitleInformationType] = field(
         default_factory=list,
         metadata={
             "name": "voteTitleInformation",
@@ -852,25 +813,21 @@ class VoteType:
             "min_occurs": 1,
         },
     )
-    decisive_majority: Optional[DecisiveMajorityType] = field(
-        default=None,
+    decisive_majority: DecisiveMajorityType = field(
         metadata={
             "name": "decisiveMajority",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
+        }
     )
-    vote_sub_type: Optional[VoteSubTypeType] = field(
-        default=None,
+    vote_sub_type: VoteSubTypeType = field(
         metadata={
             "name": "voteSubType",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
+        }
     )
-    sequence: Optional[int] = field(
+    sequence: None | int = field(
         default=None,
         metadata={
             "type": "Element",
@@ -879,7 +836,7 @@ class VoteType:
             "max_inclusive": 999,
         },
     )
-    grouping: Optional[str] = field(
+    grouping: None | str = field(
         default=None,
         metadata={
             "type": "Element",
@@ -888,32 +845,7 @@ class VoteType:
             "max_length": 50,
         },
     )
-
-
-@dataclass
-class ElectionGroupInfoType:
-    class Meta:
-        name = "electionGroupInfoType"
-
-    election_group: Optional["ElectionGroupInfoType.ElectionGroup"] = field(
-        default=None,
-        metadata={
-            "name": "electionGroup",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
-    )
-    counting_circle: List[CountingCircleType] = field(
-        default_factory=list,
-        metadata={
-            "name": "countingCircle",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "min_occurs": 1,
-        },
-    )
-    named_element: List[NamedElementType] = field(
+    named_element: list[NamedElementType] = field(
         default_factory=list,
         metadata={
             "name": "namedElement",
@@ -922,9 +854,475 @@ class ElectionGroupInfoType:
         },
     )
 
-    @dataclass
+
+@dataclass(kw_only=True)
+class CandidateResultType:
+    class Meta:
+        name = "candidateResultType"
+
+    candidate_or_write_in_candidate: CandidateOrWriteInCandidateType = field(
+        metadata={
+            "name": "candidateOrWriteInCandidate",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        }
+    )
+    count_of_votes_total: int = field(
+        metadata={
+            "name": "countOfVotesTotal",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_inclusive": 0,
+            "max_inclusive": 9999999,
+        }
+    )
+    candidate_list_results_info: (
+        None | CandidateResultType.CandidateListResultsInfo
+    ) = field(
+        default=None,
+        metadata={
+            "name": "candidateListResultsInfo",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        },
+    )
+
+    @dataclass(kw_only=True)
+    class CandidateListResultsInfo:
+        candidate_list_results: list[CandidateListResultType] = field(
+            default_factory=list,
+            metadata={
+                "name": "candidateListResults",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+        count_of_votes_from_ballots_without_list_designation: None | int = (
+            field(
+                default=None,
+                metadata={
+                    "name": "countOfVotesFromBallotsWithoutListDesignation",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                    "min_inclusive": 0,
+                    "max_inclusive": 9999999,
+                },
+            )
+        )
+
+
+@dataclass(kw_only=True)
+class DrawElectionType:
+    class Meta:
+        name = "drawElectionType"
+
+    majority_election: None | DrawElectionType.MajorityElection = field(
+        default=None,
+        metadata={
+            "name": "majorityElection",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        },
+    )
+    proportional_election: None | DrawElectionType.ProportionalElection = (
+        field(
+            default=None,
+            metadata={
+                "name": "proportionalElection",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+    )
+
+    @dataclass(kw_only=True)
+    class MajorityElection:
+        is_draw_pending: bool = field(
+            metadata={
+                "name": "isDrawPending",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            }
+        )
+        candidate_draw_election: list[CandidateOrWriteInCandidateType] = field(
+            default_factory=list,
+            metadata={
+                "name": "candidateDrawElection",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_occurs": 2,
+            },
+        )
+        winning_candidate: list[CandidateOrWriteInCandidateType] = field(
+            default_factory=list,
+            metadata={
+                "name": "winningCandidate",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+        named_element: list[NamedElementType] = field(
+            default_factory=list,
+            metadata={
+                "name": "namedElement",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+
+    @dataclass(kw_only=True)
+    class ProportionalElection:
+        list_or_list_union_draw_election: list[
+            DrawElectionType.ProportionalElection.ListOrListUnionDrawElection
+        ] = field(
+            default_factory=list,
+            metadata={
+                "name": "listOrListUnionDrawElection",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+        candidate_draw_election_on_list: list[
+            DrawElectionType.ProportionalElection.CandidateDrawElectionOnList
+        ] = field(
+            default_factory=list,
+            metadata={
+                "name": "candidateDrawElectionOnList",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+
+        @dataclass(kw_only=True)
+        class ListOrListUnionDrawElection:
+            is_draw_pending: bool = field(
+                metadata={
+                    "name": "isDrawPending",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                }
+            )
+            list_or_list_union_identification: list[
+                ListOrListUnionIdentificationType
+            ] = field(
+                default_factory=list,
+                metadata={
+                    "name": "listOrListUnionIdentification",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                    "min_occurs": 2,
+                },
+            )
+            winning_list_or_list_union_identification: list[
+                ListOrListUnionIdentificationType
+            ] = field(
+                default_factory=list,
+                metadata={
+                    "name": "winningListOrListUnionIdentification",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                },
+            )
+            named_element: list[NamedElementType] = field(
+                default_factory=list,
+                metadata={
+                    "name": "namedElement",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                },
+            )
+
+        @dataclass(kw_only=True)
+        class CandidateDrawElectionOnList:
+            is_draw_pending: bool = field(
+                metadata={
+                    "name": "isDrawPending",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                }
+            )
+            list_identification: str = field(
+                metadata={
+                    "name": "listIdentification",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                    "min_length": 1,
+                    "max_length": 50,
+                }
+            )
+            candidate_identification: list[str] = field(
+                default_factory=list,
+                metadata={
+                    "name": "candidateIdentification",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                    "min_occurs": 2,
+                    "min_length": 1,
+                    "max_length": 50,
+                },
+            )
+            winning_candidate_identification: list[str] = field(
+                default_factory=list,
+                metadata={
+                    "name": "winningCandidateIdentification",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                    "min_length": 1,
+                    "max_length": 50,
+                },
+            )
+            named_element: list[NamedElementType] = field(
+                default_factory=list,
+                metadata={
+                    "name": "namedElement",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                },
+            )
+
+
+@dataclass(kw_only=True)
+class ElectedType:
+    class Meta:
+        name = "electedType"
+
+    majority_election: None | ElectedType.MajorityElection = field(
+        default=None,
+        metadata={
+            "name": "majorityElection",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        },
+    )
+    proportional_election: None | ElectedType.ProportionalElection = field(
+        default=None,
+        metadata={
+            "name": "proportionalElection",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        },
+    )
+
+    @dataclass(kw_only=True)
+    class MajorityElection:
+        absolute_majority: None | int = field(
+            default=None,
+            metadata={
+                "name": "absoluteMajority",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_inclusive": 0,
+                "max_inclusive": 9999999,
+            },
+        )
+        is_election_result_complete: bool = field(
+            metadata={
+                "name": "isElectionResultComplete",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            }
+        )
+        elected_candidate: list[
+            ElectedType.MajorityElection.ElectedCandidate
+        ] = field(
+            default_factory=list,
+            metadata={
+                "name": "electedCandidate",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+
+        @dataclass(kw_only=True)
+        class ElectedCandidate:
+            candidate_or_write_in_candidate: CandidateOrWriteInCandidateType = field(
+                metadata={
+                    "name": "candidateOrWriteInCandidate",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                }
+            )
+            is_elected_by_draw: None | bool = field(
+                default=None,
+                metadata={
+                    "name": "isElectedByDraw",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                },
+            )
+            sort_id: None | int = field(
+                default=None,
+                metadata={
+                    "name": "sortID",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                },
+            )
+            named_element: list[NamedElementType] = field(
+                default_factory=list,
+                metadata={
+                    "name": "namedElement",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                },
+            )
+
+    @dataclass(kw_only=True)
+    class ProportionalElection:
+        is_election_result_complete: bool = field(
+            metadata={
+                "name": "isElectionResultComplete",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            }
+        )
+        list_value: list[ElectedType.ProportionalElection.List] = field(
+            default_factory=list,
+            metadata={
+                "name": "list",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_occurs": 1,
+            },
+        )
+
+        @dataclass(kw_only=True)
+        class List:
+            list_identification: str = field(
+                metadata={
+                    "name": "listIdentification",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                    "min_length": 1,
+                    "max_length": 50,
+                }
+            )
+            list_indenture_number: None | str = field(
+                default=None,
+                metadata={
+                    "name": "listIndentureNumber",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                    "min_length": 1,
+                    "max_length": 6,
+                },
+            )
+            elected_candidate: list[
+                ElectedType.ProportionalElection.List.ElectedCandidate
+            ] = field(
+                default_factory=list,
+                metadata={
+                    "name": "electedCandidate",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                },
+            )
+            count_of_seats_gained: int = field(
+                metadata={
+                    "name": "countOfSeatsGained",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                    "min_inclusive": 0,
+                    "max_inclusive": 9999999,
+                }
+            )
+            named_element: list[NamedElementType] = field(
+                default_factory=list,
+                metadata={
+                    "name": "namedElement",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                },
+            )
+
+            @dataclass(kw_only=True)
+            class ElectedCandidate:
+                candidate_identification: str = field(
+                    metadata={
+                        "name": "candidateIdentification",
+                        "type": "Element",
+                        "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                        "min_length": 1,
+                        "max_length": 50,
+                    }
+                )
+                candidate_reference_on_position: list[str] = field(
+                    default_factory=list,
+                    metadata={
+                        "name": "candidateReferenceOnPosition",
+                        "type": "Element",
+                        "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                        "min_length": 1,
+                        "max_length": 10,
+                    },
+                )
+                is_elected_by_draw: None | bool = field(
+                    default=None,
+                    metadata={
+                        "name": "isElectedByDraw",
+                        "type": "Element",
+                        "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                    },
+                )
+                mandate_type: None | MandateTypeType = field(
+                    default=None,
+                    metadata={
+                        "name": "mandateType",
+                        "type": "Element",
+                        "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                    },
+                )
+                sort_id: None | int = field(
+                    default=None,
+                    metadata={
+                        "name": "sortID",
+                        "type": "Element",
+                        "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                    },
+                )
+                named_element: list[NamedElementType] = field(
+                    default_factory=list,
+                    metadata={
+                        "name": "namedElement",
+                        "type": "Element",
+                        "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                    },
+                )
+
+
+@dataclass(kw_only=True)
+class ElectionGroupInfoType:
+    class Meta:
+        name = "electionGroupInfoType"
+
+    election_group: ElectionGroupInfoType.ElectionGroup = field(
+        metadata={
+            "name": "electionGroup",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        }
+    )
+    counting_circle: list[CountingCircleType] = field(
+        default_factory=list,
+        metadata={
+            "name": "countingCircle",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_occurs": 1,
+        },
+    )
+    named_element: list[NamedElementType] = field(
+        default_factory=list,
+        metadata={
+            "name": "namedElement",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        },
+    )
+
+    @dataclass(kw_only=True)
     class ElectionGroup:
-        election_group_identification: Optional[str] = field(
+        election_group_identification: None | str = field(
             default=None,
             metadata={
                 "name": "electionGroupIdentification",
@@ -934,16 +1332,14 @@ class ElectionGroupInfoType:
                 "max_length": 50,
             },
         )
-        domain_of_influence: Optional[DomainOfInfluenceType] = field(
-            default=None,
+        domain_of_influence: DomainOfInfluenceType = field(
             metadata={
                 "name": "domainOfInfluence",
                 "type": "Element",
                 "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "required": True,
-            },
+            }
         )
-        superior_authority: Optional[DomainOfInfluenceType] = field(
+        superior_authority: None | DomainOfInfluenceType = field(
             default=None,
             metadata={
                 "name": "superiorAuthority",
@@ -951,7 +1347,7 @@ class ElectionGroupInfoType:
                 "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
             },
         )
-        election_group_position: Optional[int] = field(
+        election_group_position: None | int = field(
             default=None,
             metadata={
                 "name": "electionGroupPosition",
@@ -959,8 +1355,8 @@ class ElectionGroupInfoType:
                 "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
             },
         )
-        election_information: List[
-            "ElectionGroupInfoType.ElectionGroup.ElectionInformation"
+        election_information: list[
+            ElectionGroupInfoType.ElectionGroup.ElectionInformation
         ] = field(
             default_factory=list,
             metadata={
@@ -970,7 +1366,7 @@ class ElectionGroupInfoType:
                 "min_occurs": 1,
             },
         )
-        named_element: List[NamedElementType] = field(
+        named_element: list[NamedElementType] = field(
             default_factory=list,
             metadata={
                 "name": "namedElement",
@@ -979,17 +1375,23 @@ class ElectionGroupInfoType:
             },
         )
 
-        @dataclass
+        @dataclass(kw_only=True)
         class ElectionInformation:
-            election: Optional[ElectionType] = field(
-                default=None,
+            election: ElectionType = field(
                 metadata={
                     "type": "Element",
                     "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                    "required": True,
+                }
+            )
+            other_identification: list[NamedIdType] = field(
+                default_factory=list,
+                metadata={
+                    "name": "otherIdentification",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
                 },
             )
-            quorum: Optional[Decimal] = field(
+            quorum: None | Decimal = field(
                 default=None,
                 metadata={
                     "type": "Element",
@@ -1000,7 +1402,7 @@ class ElectionGroupInfoType:
                     "fraction_digits": 2,
                 },
             )
-            referenced_election_association_id: Optional[str] = field(
+            referenced_election_association_id: None | str = field(
                 default=None,
                 metadata={
                     "name": "referencedElectionAssociationId",
@@ -1010,14 +1412,14 @@ class ElectionGroupInfoType:
                     "max_length": 50,
                 },
             )
-            candidate: List[CandidateType] = field(
+            candidate: list[CandidateType] = field(
                 default_factory=list,
                 metadata={
                     "type": "Element",
                     "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
                 },
             )
-            list_value: List[ListType] = field(
+            list_value: list[ListType] = field(
                 default_factory=list,
                 metadata={
                     "name": "list",
@@ -1025,7 +1427,7 @@ class ElectionGroupInfoType:
                     "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
                 },
             )
-            list_union: List[ListUnionType] = field(
+            list_union: list[ListUnionType] = field(
                 default_factory=list,
                 metadata={
                     "name": "listUnion",
@@ -1033,7 +1435,7 @@ class ElectionGroupInfoType:
                     "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
                 },
             )
-            named_element: List[NamedElementType] = field(
+            named_element: list[NamedElementType] = field(
                 default_factory=list,
                 metadata={
                     "name": "namedElement",
@@ -1043,176 +1445,19 @@ class ElectionGroupInfoType:
             )
 
 
-@dataclass
-class ElectionResultType:
-    class Meta:
-        name = "electionResultType"
-
-    election_identification: Optional[str] = field(
-        default=None,
-        metadata={
-            "name": "electionIdentification",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_length": 1,
-            "max_length": 50,
-        },
-    )
-    majoral_election: Optional["ElectionResultType.MajoralElection"] = field(
-        default=None,
-        metadata={
-            "name": "majoralElection",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-        },
-    )
-    proportional_election: Optional[
-        "ElectionResultType.ProportionalElection"
-    ] = field(
-        default=None,
-        metadata={
-            "name": "proportionalElection",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-        },
-    )
-    named_element: List[NamedElementType] = field(
-        default_factory=list,
-        metadata={
-            "name": "namedElement",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-        },
-    )
-
-    @dataclass
-    class MajoralElection:
-        """
-        :ivar candidate_result: element ist always supplied for all
-            candidates that are known now. So candidate and
-            candidateResult have always the same number of elements
-        :ivar count_of_invalid_votes_total:
-        :ivar count_of_blank_votes_total:
-        :ivar count_of_individual_votes_total:
-        :ivar named_element:
-        """
-
-        candidate_result: List[CandidateResultType] = field(
-            default_factory=list,
-            metadata={
-                "name": "candidateResult",
-                "type": "Element",
-                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "min_occurs": 1,
-            },
-        )
-        count_of_invalid_votes_total: Optional[int] = field(
-            default=None,
-            metadata={
-                "name": "countOfInvalidVotesTotal",
-                "type": "Element",
-                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "required": True,
-                "min_inclusive": 0,
-                "max_inclusive": 9999999,
-            },
-        )
-        count_of_blank_votes_total: Optional[int] = field(
-            default=None,
-            metadata={
-                "name": "countOfBlankVotesTotal",
-                "type": "Element",
-                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "required": True,
-                "min_inclusive": 0,
-                "max_inclusive": 9999999,
-            },
-        )
-        count_of_individual_votes_total: Optional[int] = field(
-            default=None,
-            metadata={
-                "name": "countOfIndividualVotesTotal",
-                "type": "Element",
-                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "required": True,
-                "min_inclusive": 0,
-                "max_inclusive": 9999999,
-            },
-        )
-        named_element: List[NamedElementType] = field(
-            default_factory=list,
-            metadata={
-                "name": "namedElement",
-                "type": "Element",
-                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            },
-        )
-
-    @dataclass
-    class ProportionalElection:
-        count_of_changed_ballots_without_list_designation: Optional[
-            int
-        ] = field(
-            default=None,
-            metadata={
-                "name": "countOfChangedBallotsWithoutListDesignation",
-                "type": "Element",
-                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "required": True,
-                "min_inclusive": 0,
-                "max_inclusive": 9999999,
-            },
-        )
-        count_of_empty_votes_of_changed_ballots_without_list_designation: \
-            Optional[int] = field(
-                default=None,
-                metadata={
-                    "name":
-                    "countOfEmptyVotesOfChangedBallotsWithoutListDesignation",
-                    "type": "Element",
-                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                    "required": True,
-                    "min_inclusive": 0,
-                    "max_inclusive": 9999999,
-                },
-            )
-        list_results: List[ListResultType] = field(
-            default_factory=list,
-            metadata={
-                "name": "listResults",
-                "type": "Element",
-                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "min_occurs": 1,
-            },
-        )
-        named_element: List[NamedElementType] = field(
-            default_factory=list,
-            metadata={
-                "name": "namedElement",
-                "type": "Element",
-                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            },
-        )
-
-
-@dataclass
+@dataclass(kw_only=True)
 class ResultDataType:
     class Meta:
         name = "resultDataType"
 
-    count_of_voters_information: Optional[
-        CountOfVotersInformationType
-    ] = field(
-        default=None,
+    count_of_voters_information: CountOfVotersInformationType = field(
         metadata={
             "name": "countOfVotersInformation",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
+        }
     )
-    voting_card_information: Optional[VotingCardInformationType] = field(
+    voting_card_information: None | VotingCardInformationType = field(
         default=None,
         metadata={
             "name": "votingCardInformation",
@@ -1220,16 +1465,14 @@ class ResultDataType:
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
         },
     )
-    fully_counted_true: Optional[bool] = field(
-        default=None,
+    is_fully_counted: bool = field(
         metadata={
-            "name": "fullyCountedTrue",
+            "name": "isFullyCounted",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
+        }
     )
-    released_timestamp: Optional[XmlDateTime] = field(
+    released_timestamp: None | XmlDateTime = field(
         default=None,
         metadata={
             "name": "releasedTimestamp",
@@ -1237,7 +1480,7 @@ class ResultDataType:
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
         },
     )
-    lockout_timestamp: Optional[XmlDateTime] = field(
+    lockout_timestamp: None | XmlDateTime = field(
         default=None,
         metadata={
             "name": "lockoutTimestamp",
@@ -1245,7 +1488,7 @@ class ResultDataType:
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
         },
     )
-    voter_turnout: Optional[Decimal] = field(
+    voter_turnout: None | Decimal = field(
         default=None,
         metadata={
             "name": "voterTurnout",
@@ -1257,73 +1500,61 @@ class ResultDataType:
             "fraction_digits": 2,
         },
     )
-    received_votes: Optional[int] = field(
-        default=None,
+    received_votes: int = field(
         metadata={
             "name": "receivedVotes",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_inclusive": 0,
             "max_inclusive": 9999999,
-        },
+        }
     )
-    received_invalid_votes: Optional[int] = field(
-        default=None,
+    received_invalid_votes: int = field(
         metadata={
             "name": "receivedInvalidVotes",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_inclusive": 0,
             "max_inclusive": 9999999,
-        },
+        }
     )
-    received_empty_votes: Optional[int] = field(
-        default=None,
+    received_blank_votes: int = field(
         metadata={
-            "name": "receivedEmptyVotes",
+            "name": "receivedBlankVotes",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_inclusive": 0,
             "max_inclusive": 9999999,
-        },
+        }
     )
-    received_valid_votes: Optional[int] = field(
-        default=None,
+    received_valid_votes: int = field(
         metadata={
             "name": "receivedValidVotes",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_inclusive": 0,
             "max_inclusive": 9999999,
-        },
+        }
     )
-    count_of_yes_votes: Optional[int] = field(
-        default=None,
+    count_of_yes_votes: int = field(
         metadata={
             "name": "countOfYesVotes",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_inclusive": 0,
             "max_inclusive": 9999999,
-        },
+        }
     )
-    count_of_no_votes: Optional[int] = field(
-        default=None,
+    count_of_no_votes: int = field(
         metadata={
             "name": "countOfNoVotes",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_inclusive": 0,
             "max_inclusive": 9999999,
-        },
+        }
     )
-    count_of_votes_without_answer: Optional[int] = field(
+    count_of_votes_without_answer: None | int = field(
         default=None,
         metadata={
             "name": "countOfVotesWithoutAnswer",
@@ -1333,7 +1564,7 @@ class ResultDataType:
             "max_inclusive": 9999999,
         },
     )
-    named_element: List[NamedElementType] = field(
+    named_element: list[NamedElementType] = field(
         default_factory=list,
         metadata={
             "name": "namedElement",
@@ -1343,21 +1574,19 @@ class ResultDataType:
     )
 
 
-@dataclass
+@dataclass(kw_only=True)
 class CountingCircleInfoType:
     class Meta:
         name = "countingCircleInfoType"
 
-    counting_circle: Optional[CountingCircleType] = field(
-        default=None,
+    counting_circle: CountingCircleType = field(
         metadata={
             "name": "countingCircle",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
+        }
     )
-    result_data: Optional[ResultDataType] = field(
+    result_data: None | ResultDataType = field(
         default=None,
         metadata={
             "name": "resultData",
@@ -1367,132 +1596,39 @@ class CountingCircleInfoType:
     )
 
 
-@dataclass
-class CountingCircleResultType:
+@dataclass(kw_only=True)
+class ElectionResultType:
     class Meta:
-        name = "countingCircleResultType"
+        name = "electionResultType"
 
-    counting_circle_id: Optional[str] = field(
-        default=None,
+    election_identification: str = field(
         metadata={
-            "name": "countingCircleId",
+            "name": "electionIdentification",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_length": 1,
             "max_length": 50,
-        },
+        }
     )
-    count_of_voters_information: Optional[
-        CountOfVotersInformationType
-    ] = field(
+    majority_election: None | ElectionResultType.MajorityElection = field(
         default=None,
         metadata={
-            "name": "countOfVotersInformation",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
-    )
-    voting_card_information: Optional[VotingCardInformationType] = field(
-        default=None,
-        metadata={
-            "name": "votingCardInformation",
+            "name": "majorityElection",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
         },
     )
-    fully_counted_true: Optional[bool] = field(
-        default=None,
-        metadata={
-            "name": "fullyCountedTrue",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
+    proportional_election: None | ElectionResultType.ProportionalElection = (
+        field(
+            default=None,
+            metadata={
+                "name": "proportionalElection",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
     )
-    released_timestamp: Optional[XmlDateTime] = field(
-        default=None,
-        metadata={
-            "name": "releasedTimestamp",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-        },
-    )
-    lockout_timestamp: Optional[XmlDateTime] = field(
-        default=None,
-        metadata={
-            "name": "lockoutTimestamp",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-        },
-    )
-    voter_turnout: Optional[Decimal] = field(
-        default=None,
-        metadata={
-            "name": "voterTurnout",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "min_inclusive": Decimal("0.00"),
-            "max_inclusive": Decimal("100.00"),
-            "total_digits": 5,
-            "fraction_digits": 2,
-        },
-    )
-    count_of_received_ballots: Optional[int] = field(
-        default=None,
-        metadata={
-            "name": "countOfReceivedBallots",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_inclusive": 0,
-            "max_inclusive": 9999999,
-        },
-    )
-    count_of_blank_ballots: Optional[int] = field(
-        default=None,
-        metadata={
-            "name": "countOfBlankBallots",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_inclusive": 0,
-            "max_inclusive": 9999999,
-        },
-    )
-    count_of_invalid_ballots: Optional[int] = field(
-        default=None,
-        metadata={
-            "name": "countOfInvalidBallots",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_inclusive": 0,
-            "max_inclusive": 9999999,
-        },
-    )
-    count_of_valid_ballots: Optional[int] = field(
-        default=None,
-        metadata={
-            "name": "countOfValidBallots",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_inclusive": 0,
-            "max_inclusive": 9999999,
-        },
-    )
-    election_result: Optional[ElectionResultType] = field(
-        default=None,
-        metadata={
-            "name": "electionResult",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
-    )
-    named_element: List[NamedElementType] = field(
+    named_element: list[NamedElementType] = field(
         default_factory=list,
         metadata={
             "name": "namedElement",
@@ -1501,16 +1637,112 @@ class CountingCircleResultType:
         },
     )
 
+    @dataclass(kw_only=True)
+    class MajorityElection:
+        """
+        :ivar candidate_result: The element is always delivered for all
+            candidates that are known at the current time. All elements
+            in candidate must therefore be contained in candidateResult.
+            Addidional write-in candidates must be added in the
+            structure, at the time they are known
+        :ivar count_of_invalid_votes_total:
+        :ivar count_of_blank_votes_total:
+        :ivar count_of_individual_votes_total:
+        :ivar named_element:
+        """
 
-@dataclass
+        candidate_result: list[CandidateResultType] = field(
+            default_factory=list,
+            metadata={
+                "name": "candidateResult",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+        count_of_invalid_votes_total: int = field(
+            metadata={
+                "name": "countOfInvalidVotesTotal",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_inclusive": 0,
+                "max_inclusive": 9999999,
+            }
+        )
+        count_of_blank_votes_total: int = field(
+            metadata={
+                "name": "countOfBlankVotesTotal",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_inclusive": 0,
+                "max_inclusive": 9999999,
+            }
+        )
+        count_of_individual_votes_total: int = field(
+            metadata={
+                "name": "countOfIndividualVotesTotal",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_inclusive": 0,
+                "max_inclusive": 9999999,
+            }
+        )
+        named_element: list[NamedElementType] = field(
+            default_factory=list,
+            metadata={
+                "name": "namedElement",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+
+    @dataclass(kw_only=True)
+    class ProportionalElection:
+        count_of_changed_ballots_without_list_designation: int = field(
+            metadata={
+                "name": "countOfChangedBallotsWithoutListDesignation",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_inclusive": 0,
+                "max_inclusive": 9999999,
+            }
+        )
+        count_of_blank_votes_of_changed_ballots_without_list_designation: int = field(
+            metadata={
+                "name": "countOfBlankVotesOfChangedBallotsWithoutListDesignation",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_inclusive": 0,
+                "max_inclusive": 9999999,
+            }
+        )
+        list_results: list[ListResultType] = field(
+            default_factory=list,
+            metadata={
+                "name": "listResults",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_occurs": 1,
+            },
+        )
+        named_element: list[NamedElementType] = field(
+            default_factory=list,
+            metadata={
+                "name": "namedElement",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+
+
+@dataclass(kw_only=True)
 class EventElectionInformationDeliveryType:
     """
     :ivar canton_id:
     :ivar polling_day:
     :ivar election_association:
-    :ivar election_group_info: There is always an electionGroup, if it
-        is not needed to keep several elections together, there is only
-        one election under it
+    :ivar election_group_info: The electionGroup is always used, if
+        there is an election. If it is not required to group several
+        elections, it only contains a single election.
     :ivar number_of_entries:
     :ivar extension:
     """
@@ -1518,27 +1750,23 @@ class EventElectionInformationDeliveryType:
     class Meta:
         name = "eventElectionInformationDeliveryType"
 
-    canton_id: Optional[int] = field(
-        default=None,
+    canton_id: int = field(
         metadata={
             "name": "cantonId",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_inclusive": 1,
             "max_inclusive": 26,
-        },
+        }
     )
-    polling_day: Optional[XmlDate] = field(
-        default=None,
+    polling_day: XmlDate = field(
         metadata={
             "name": "pollingDay",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
+        }
     )
-    election_association: List[ElectionAssociationType] = field(
+    election_association: list[ElectionAssociationType] = field(
         default_factory=list,
         metadata={
             "name": "electionAssociation",
@@ -1546,27 +1774,24 @@ class EventElectionInformationDeliveryType:
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
         },
     )
-    election_group_info: List[ElectionGroupInfoType] = field(
+    election_group_info: list[ElectionGroupInfoType] = field(
         default_factory=list,
         metadata={
             "name": "electionGroupInfo",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "min_occurs": 1,
         },
     )
-    number_of_entries: Optional[int] = field(
-        default=None,
+    number_of_entries: int = field(
         metadata={
             "name": "numberOfEntries",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_inclusive": 1,
+            "min_inclusive": 0,
             "max_inclusive": 999,
-        },
+        }
     )
-    extension: Optional[ExtensionType] = field(
+    extension: None | ExtensionType = field(
         default=None,
         metadata={
             "type": "Element",
@@ -1575,33 +1800,185 @@ class EventElectionInformationDeliveryType:
     )
 
 
-@dataclass
+@dataclass(kw_only=True)
+class CountingCircleResultType:
+    class Meta:
+        name = "countingCircleResultType"
+
+    counting_circle: CountingCircleType = field(
+        metadata={
+            "name": "countingCircle",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        }
+    )
+    result_data: None | CountingCircleResultType.ResultData = field(
+        default=None,
+        metadata={
+            "name": "resultData",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        },
+    )
+
+    @dataclass(kw_only=True)
+    class ResultData:
+        count_of_voters_information: CountOfVotersInformationType = field(
+            metadata={
+                "name": "countOfVotersInformation",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            }
+        )
+        voting_card_information: None | VotingCardInformationType = field(
+            default=None,
+            metadata={
+                "name": "votingCardInformation",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+        is_fully_counted: bool = field(
+            metadata={
+                "name": "isFullyCounted",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            }
+        )
+        released_timestamp: None | XmlDateTime = field(
+            default=None,
+            metadata={
+                "name": "releasedTimestamp",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+        lockout_timestamp: None | XmlDateTime = field(
+            default=None,
+            metadata={
+                "name": "lockoutTimestamp",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+        voter_turnout: None | Decimal = field(
+            default=None,
+            metadata={
+                "name": "voterTurnout",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_inclusive": Decimal("0.00"),
+                "max_inclusive": Decimal("100.00"),
+                "total_digits": 5,
+                "fraction_digits": 2,
+            },
+        )
+        count_of_received_ballots: int = field(
+            metadata={
+                "name": "countOfReceivedBallots",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_inclusive": 0,
+                "max_inclusive": 9999999,
+            }
+        )
+        count_of_blank_ballots: int = field(
+            metadata={
+                "name": "countOfBlankBallots",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_inclusive": 0,
+                "max_inclusive": 9999999,
+            }
+        )
+        count_of_invalid_ballots: int = field(
+            metadata={
+                "name": "countOfInvalidBallots",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_inclusive": 0,
+                "max_inclusive": 9999999,
+            }
+        )
+        count_of_valid_ballots: int = field(
+            metadata={
+                "name": "countOfValidBallots",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                "min_inclusive": 0,
+                "max_inclusive": 9999999,
+            }
+        )
+        election_result: ElectionResultType = field(
+            metadata={
+                "name": "electionResult",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            }
+        )
+        named_element: list[NamedElementType] = field(
+            default_factory=list,
+            metadata={
+                "name": "namedElement",
+                "type": "Element",
+                "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            },
+        )
+
+
+@dataclass(kw_only=True)
+class VoteInfoType:
+    class Meta:
+        name = "voteInfoType"
+
+    vote: VoteType = field(
+        metadata={
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        }
+    )
+    counting_circle_info: list[CountingCircleInfoType] = field(
+        default_factory=list,
+        metadata={
+            "name": "countingCircleInfo",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+            "min_occurs": 1,
+        },
+    )
+    vote_result_data: None | VoteResultDataType = field(
+        default=None,
+        metadata={
+            "name": "voteResultData",
+            "type": "Element",
+            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+        },
+    )
+
+
+@dataclass(kw_only=True)
 class EventElectionResultDeliveryType:
     class Meta:
         name = "eventElectionResultDeliveryType"
 
-    canton_id: Optional[int] = field(
-        default=None,
+    canton_id: int = field(
         metadata={
             "name": "cantonId",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_inclusive": 1,
             "max_inclusive": 26,
-        },
+        }
     )
-    polling_day: Optional[XmlDate] = field(
-        default=None,
+    polling_day: XmlDate = field(
         metadata={
             "name": "pollingDay",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
+        }
     )
-    election_group_result: List[
-        "EventElectionResultDeliveryType.ElectionGroupResult"
+    election_group_result: list[
+        EventElectionResultDeliveryType.ElectionGroupResult
     ] = field(
         default_factory=list,
         metadata={
@@ -1611,18 +1988,16 @@ class EventElectionResultDeliveryType:
             "min_occurs": 1,
         },
     )
-    number_of_entries: Optional[int] = field(
-        default=None,
+    number_of_entries: int = field(
         metadata={
             "name": "numberOfEntries",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_inclusive": 1,
+            "min_inclusive": 0,
             "max_inclusive": 999,
-        },
+        }
     )
-    extension: Optional[ExtensionType] = field(
+    extension: None | ExtensionType = field(
         default=None,
         metadata={
             "type": "Element",
@@ -1630,22 +2005,20 @@ class EventElectionResultDeliveryType:
         },
     )
 
-    @dataclass
+    @dataclass(kw_only=True)
     class ElectionGroupResult:
-        election_group_identification: Optional[str] = field(
+        election_group_identification: None | str = field(
             default=None,
             metadata={
                 "name": "electionGroupIdentification",
                 "type": "Element",
                 "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                "required": True,
                 "min_length": 1,
                 "max_length": 50,
             },
         )
-        election_result: List[
-            "EventElectionResultDeliveryType.ElectionGroupResult."
-            "ElectionResult"
+        election_result: list[
+            EventElectionResultDeliveryType.ElectionGroupResult.ElectionResult
         ] = field(
             default_factory=list,
             metadata={
@@ -1655,7 +2028,7 @@ class EventElectionResultDeliveryType:
                 "min_occurs": 1,
             },
         )
-        named_element: List[NamedElementType] = field(
+        named_element: list[NamedElementType] = field(
             default_factory=list,
             metadata={
                 "name": "namedElement",
@@ -1664,27 +2037,26 @@ class EventElectionResultDeliveryType:
             },
         )
 
-        @dataclass
+        @dataclass(kw_only=True)
         class ElectionResult:
-            election_identification: Optional[str] = field(
-                default=None,
+            election_identification: str = field(
                 metadata={
                     "name": "electionIdentification",
                     "type": "Element",
                     "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-                    "required": True,
                     "min_length": 1,
                     "max_length": 50,
-                },
+                }
             )
-            candidate: List[CandidateType] = field(
+            other_identification: list[NamedIdType] = field(
                 default_factory=list,
                 metadata={
+                    "name": "otherIdentification",
                     "type": "Element",
                     "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
                 },
             )
-            counting_circle_result: List[CountingCircleResultType] = field(
+            counting_circle_result: list[CountingCircleResultType] = field(
                 default_factory=list,
                 metadata={
                     "name": "countingCircleResult",
@@ -1693,14 +2065,22 @@ class EventElectionResultDeliveryType:
                     "min_occurs": 1,
                 },
             )
-            elected: Optional[ElectedType] = field(
+            elected: None | ElectedType = field(
                 default=None,
                 metadata={
                     "type": "Element",
                     "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
                 },
             )
-            named_element: List[NamedElementType] = field(
+            draw_election: None | DrawElectionType = field(
+                default=None,
+                metadata={
+                    "name": "drawElection",
+                    "type": "Element",
+                    "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
+                },
+            )
+            named_element: list[NamedElementType] = field(
                 default_factory=list,
                 metadata={
                     "name": "namedElement",
@@ -1710,76 +2090,45 @@ class EventElectionResultDeliveryType:
             )
 
 
-@dataclass
-class VoteInfoType:
-    class Meta:
-        name = "voteInfoType"
-
-    vote: Optional[VoteType] = field(
-        default=None,
-        metadata={
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
-    )
-    counting_circle_info: List[CountingCircleInfoType] = field(
-        default_factory=list,
-        metadata={
-            "name": "countingCircleInfo",
-            "type": "Element",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "min_occurs": 1,
-        },
-    )
-
-
-@dataclass
+@dataclass(kw_only=True)
 class EventVoteBaseDeliveryType:
     class Meta:
         name = "eventVoteBaseDeliveryType"
 
-    canton_id: Optional[int] = field(
-        default=None,
+    canton_id: int = field(
         metadata={
             "name": "cantonId",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
             "min_inclusive": 1,
             "max_inclusive": 26,
-        },
+        }
     )
-    polling_day: Optional[XmlDate] = field(
-        default=None,
+    polling_day: XmlDate = field(
         metadata={
             "name": "pollingDay",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-        },
+        }
     )
-    vote_info: List[VoteInfoType] = field(
+    vote_info: list[VoteInfoType] = field(
         default_factory=list,
         metadata={
             "name": "voteInfo",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "min_occurs": 1,
         },
     )
-    number_of_entries: Optional[int] = field(
-        default=None,
+    number_of_entries: int = field(
         metadata={
             "name": "numberOfEntries",
             "type": "Element",
             "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
-            "required": True,
-            "min_inclusive": 1,
+            "min_inclusive": 0,
             "max_inclusive": 999,
-        },
+        }
     )
-    extension: Optional[ExtensionType] = field(
+    extension: None | ExtensionType = field(
         default=None,
         metadata={
             "type": "Element",
@@ -1788,50 +2137,38 @@ class EventVoteBaseDeliveryType:
     )
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Delivery:
     class Meta:
         name = "delivery"
         namespace = "http://www.ech.ch/xmlns/eCH-0252/2"
 
-    delivery_header: Optional[HeaderType] = field(
-        default=None,
+    delivery_header: HeaderType = field(
         metadata={
             "name": "deliveryHeader",
             "type": "Element",
-            "required": True,
-        },
+        }
     )
-    vote_base_delivery: Optional[EventVoteBaseDeliveryType] = field(
+    vote_base_delivery: None | EventVoteBaseDeliveryType = field(
         default=None,
         metadata={
             "name": "voteBaseDelivery",
             "type": "Element",
         },
     )
-    election_information_delivery: Optional[
-        EventElectionInformationDeliveryType
-    ] = field(
+    election_information_delivery: (
+        None | EventElectionInformationDeliveryType
+    ) = field(
         default=None,
         metadata={
             "name": "electionInformationDelivery",
             "type": "Element",
         },
     )
-    election_result_delivery: Optional[
-        EventElectionResultDeliveryType
-    ] = field(
+    election_result_delivery: None | EventElectionResultDeliveryType = field(
         default=None,
         metadata={
             "name": "electionResultDelivery",
             "type": "Element",
-        },
-    )
-    minor_version: Optional[int] = field(
-        default=None,
-        metadata={
-            "name": "minorVersion",
-            "type": "Attribute",
-            "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
         },
     )
