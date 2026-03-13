@@ -1,6 +1,7 @@
-from pytest import fixture, mark
+from pytest import fixture
 from typing import Iterator
-from xsdata_ech.e_ch_0155_5_0 import (
+from xsdata_ech.e_ch_0058_5_0 import Header
+from xsdata_ech.e_ch_0155_5_2 import (
     CandidatePositionInformationType,
     CandidateTextInformationType,
     ElectionDescriptionInformationType,
@@ -24,8 +25,8 @@ from xsdata_ech.e_ch_0252_2_0 import (
     SexType
 )
 from xsdata.formats.dataclass.context import XmlContext
-from xsdata.formats.dataclass.parsers import JsonParser, XmlParser
-from xsdata.formats.dataclass.serializers import JsonSerializer, XmlSerializer
+from xsdata.formats.dataclass.parsers import XmlParser
+from xsdata.formats.dataclass.serializers import XmlSerializer
 from xsdata.formats.dataclass.serializers.config import SerializerConfig
 from xsdata.models.datatype import XmlDate
 
@@ -174,6 +175,7 @@ def delivery() -> Iterator[Delivery]:
     )
 
     yield Delivery(
+        delivery_header=Header(),
         election_information_delivery=EventElectionInformationDeliveryType(
             canton_id=1,
             polling_day=XmlDate(2023, 1, 1),
@@ -224,17 +226,3 @@ def test_ech_0252_proporz_election_information_xml(
     assert delivery == parsed
 
 
-@mark.skip('xsdata messes up class inference')
-def test_ech_0252_proporz_election_information_json(
-    delivery: Delivery
-) -> None:
-    # to json
-    config = SerializerConfig(pretty_print=True)
-    serializer = JsonSerializer(config=config)
-    json = serializer.render(delivery)
-    print(json)
-
-    # from json
-    parser = JsonParser(context=XmlContext())
-    parsed: Delivery = parser.from_string(json)
-    assert delivery == parsed

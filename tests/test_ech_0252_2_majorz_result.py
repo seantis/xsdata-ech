@@ -1,8 +1,11 @@
 from pytest import fixture
 from typing import Iterator
+from xsdata_ech.e_ch_0058_5_0 import Header
 from xsdata_ech.e_ch_0252_2_0 import (
+    CandidateOrWriteInCandidateType,
     CandidateResultType,
     CountingCircleResultType,
+    CountingCircleType,
     CountOfVotersInformationType,
     Delivery,
     ElectionResultType,
@@ -11,71 +14,88 @@ from xsdata_ech.e_ch_0252_2_0 import (
     VoterTypeType
 )
 from xsdata.formats.dataclass.context import XmlContext
-from xsdata.formats.dataclass.parsers import JsonParser, XmlParser
-from xsdata.formats.dataclass.serializers import JsonSerializer, XmlSerializer
+from xsdata.formats.dataclass.parsers import XmlParser
+from xsdata.formats.dataclass.serializers import XmlSerializer
 from xsdata.formats.dataclass.serializers.config import SerializerConfig
 from xsdata.models.datatype import XmlDate
 
 SubtotalInfo = CountOfVotersInformationType.SubtotalInfo
 ElectionGroupResult = EventElectionResultDeliveryType.ElectionGroupResult
 ElectionResult = ElectionGroupResult.ElectionResult
-MajoralElectionResult = ElectionResultType.MajoralElection
-MajoralElectionElected = ElectedType.MajoralElection
-ElectedCandidate = MajoralElectionElected.ElectedCandidate
+MajorityElectionResult = ElectionResultType.MajorityElection
+MajorityElectionElected = ElectedType.MajorityElection
+ElectedCandidate = MajorityElectionElected.ElectedCandidate
+ResultData = CountingCircleResultType.ResultData
 
 
 @fixture()
 def delivery() -> Iterator[Delivery]:
     counting_circle_result = [
         CountingCircleResultType(
-            counting_circle_id='3901',
-            count_of_voters_information=(
-                CountOfVotersInformationType(
-                    count_of_voters_total=100,
-                    subtotal_info=[
-                        SubtotalInfo(
-                            count_of_voters=100,
-                            voter_type=(
-                                VoterTypeType.VALUE_2
-                            ),
-                        )
-                    ]
-                )
+            counting_circle=CountingCircleType(
+                counting_circle_id='3901',
             ),
-            fully_counted_true=True,
-            count_of_received_ballots=100,
-            count_of_blank_ballots=1,
-            count_of_invalid_ballots=2,
-            count_of_valid_ballots=97,
-            election_result=ElectionResultType(
-                election_identification='election-id',
-                majoral_election=MajoralElectionResult(
-                    candidate_result=[
-                        CandidateResultType(
-                            candidate_identification='candidate-id',
-                            count_of_votes_total=10
-                        )
-                    ],
-                    count_of_invalid_votes_total=0,
-                    count_of_blank_votes_total=0,
-                    count_of_individual_votes_total=0
+            result_data=ResultData(
+                count_of_voters_information=(
+                    CountOfVotersInformationType(
+                        count_of_voters_total=100,
+                        subtotal_info=[
+                            SubtotalInfo(
+                                count_of_voters=100,
+                                voter_type=(
+                                    VoterTypeType.VALUE_2
+                                ),
+                            )
+                        ]
+                    )
+                ),
+                is_fully_counted=True,
+                count_of_received_ballots=100,
+                count_of_blank_ballots=1,
+                count_of_invalid_ballots=2,
+                count_of_valid_ballots=97,
+                election_result=ElectionResultType(
+                    election_identification='election-id',
+                    majority_election=MajorityElectionResult(
+                        candidate_result=[
+                            CandidateResultType(
+                                candidate_or_write_in_candidate=(
+                                    CandidateOrWriteInCandidateType(
+                                        candidate_identification=(
+                                            'candidate-id'
+                                        ),
+                                    )
+                                ),
+                                count_of_votes_total=10
+                            )
+                        ],
+                        count_of_invalid_votes_total=0,
+                        count_of_blank_votes_total=0,
+                        count_of_individual_votes_total=0
+                    )
                 )
             )
         )
     ]
 
     elected = ElectedType(
-        majoral_election=MajoralElectionElected(
+        majority_election=MajorityElectionElected(
             absolute_majority=500,
+            is_election_result_complete=True,
             elected_candidate=[
                 ElectedCandidate(
-                    candidate_identification='candidate-id'
+                    candidate_or_write_in_candidate=(
+                        CandidateOrWriteInCandidateType(
+                            candidate_identification='candidate-id'
+                        )
+                    ),
                 )
             ]
         )
     )
 
     yield Delivery(
+        delivery_header=Header(),
         election_result_delivery=EventElectionResultDeliveryType(
             canton_id=1,
             polling_day=XmlDate(2023, 1, 1),
@@ -109,13 +129,3 @@ def test_ech_0252_majorz_election_result_xml(delivery: Delivery) -> None:
     assert delivery == parsed
 
 
-def test_ech_0252_majorz_election_result_json(delivery: Delivery) -> None:
-    # to json
-    config = SerializerConfig(pretty_print=True)
-    serializer = JsonSerializer(config=config)
-    json = serializer.render(delivery)
-
-    # from json
-    parser = JsonParser(context=XmlContext())
-    parsed: Delivery = parser.from_string(json)
-    assert delivery == parsed

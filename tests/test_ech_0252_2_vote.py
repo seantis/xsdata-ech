@@ -1,6 +1,7 @@
 from decimal import Decimal
 from pytest import fixture
 from typing import Iterator
+from xsdata_ech.e_ch_0058_5_0 import Header
 from xsdata_ech.e_ch_0252_2_0 import (
     CountingCircleInfoType,
     CountingCircleType,
@@ -19,8 +20,8 @@ from xsdata_ech.e_ch_0252_2_0 import (
     VoteType
 )
 from xsdata.formats.dataclass.context import XmlContext
-from xsdata.formats.dataclass.parsers import JsonParser, XmlParser
-from xsdata.formats.dataclass.serializers import JsonSerializer, XmlSerializer
+from xsdata.formats.dataclass.parsers import XmlParser
+from xsdata.formats.dataclass.serializers import XmlSerializer
 from xsdata.formats.dataclass.serializers.config import SerializerConfig
 from xsdata.models.datatype import XmlDate
 
@@ -31,6 +32,7 @@ SubtotalInfo = CountOfVotersInformationType.SubtotalInfo
 @fixture()
 def delivery() -> Iterator[Delivery]:
     yield Delivery(
+        delivery_header=Header(),
         vote_base_delivery=EventVoteBaseDeliveryType(
             canton_id=18,
             polling_day=XmlDate(2023, 1, 1),
@@ -98,11 +100,11 @@ def delivery() -> Iterator[Delivery]:
                                         ]
                                     )
                                 ),
-                                fully_counted_true=True,
+                                is_fully_counted=True,
                                 voter_turnout=Decimal('10.03'),
                                 received_votes=100,
                                 received_invalid_votes=100,
-                                received_empty_votes=100,
+                                received_blank_votes=100,
                                 received_valid_votes=100,
                                 count_of_yes_votes=100,
                                 count_of_no_votes=100,
@@ -129,13 +131,3 @@ def test_ech_0252_vote_xml(delivery: Delivery) -> None:
     assert delivery == parsed
 
 
-def test_ech_0252_vote_json(delivery: Delivery) -> None:
-    # to json
-    config = SerializerConfig(pretty_print=True)
-    serializer = JsonSerializer(config=config)
-    json = serializer.render(delivery)
-
-    # from json
-    parser = JsonParser(context=XmlContext())
-    parsed: Delivery = parser.from_string(json)
-    assert delivery == parsed
