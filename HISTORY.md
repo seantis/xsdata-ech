@@ -1,6 +1,9 @@
 History
 =======
-- Update to official eCH-0252 v2.0.0 and eCH-0155 v5.2 schemas
+- Update to official eCH-0252 v2.0.0 and eCH-0155 v5.2 schemas.
+- Updates tox config.
+- Drop support for Python 3.8 and 3.9.
+
 
 0.3.0 (21.08.2024)
 ------------------
