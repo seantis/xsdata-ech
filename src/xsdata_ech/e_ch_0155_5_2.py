@@ -342,7 +342,8 @@ class ElectronicBallotDescriptionInformationType:
         name = "electronicBallotDescriptionInformationType"
 
     electronic_ballot_description_info: list[
-        ElectronicBallotDescriptionInformationType.ElectronicBallotDescriptionInfo
+        "ElectronicBallotDescriptionInformationType"
+        ".ElectronicBallotDescriptionInfo"
     ] = field(
         default_factory=list,
         metadata={

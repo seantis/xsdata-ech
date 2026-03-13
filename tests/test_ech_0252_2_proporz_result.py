@@ -145,5 +145,3 @@ def test_ech_0252_proporz_election_result_xml(delivery: Delivery) -> None:
     parser = XmlParser(context=XmlContext())
     parsed: Delivery = parser.from_string(xml)
     assert delivery == parsed
-
-

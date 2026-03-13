@@ -1135,7 +1135,9 @@ class ElectedType:
 
         @dataclass(kw_only=True)
         class ElectedCandidate:
-            candidate_or_write_in_candidate: CandidateOrWriteInCandidateType = field(
+            candidate_or_write_in_candidate: (
+                CandidateOrWriteInCandidateType
+            ) = field(
                 metadata={
                     "name": "candidateOrWriteInCandidate",
                     "type": "Element",
@@ -1706,9 +1708,14 @@ class ElectionResultType:
                 "max_inclusive": 9999999,
             }
         )
-        count_of_blank_votes_of_changed_ballots_without_list_designation: int = field(
+        count_of_blank_votes_of_changed_ballots_without_list_designation: (
+            int
+        ) = field(
             metadata={
-                "name": "countOfBlankVotesOfChangedBallotsWithoutListDesignation",
+                "name": (
+                    "countOfBlankVotesOfChanged"
+                    "BallotsWithoutListDesignation"
+                ),
                 "type": "Element",
                 "namespace": "http://www.ech.ch/xmlns/eCH-0252/2",
                 "min_inclusive": 0,
