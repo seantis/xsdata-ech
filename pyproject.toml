@@ -7,6 +7,10 @@ strict = true
 python_version = "3.10"
 
 [[tool.mypy.overrides]]
+module = "xsdata_ech.*"
+implicit_reexport = true
+
+[[tool.mypy.overrides]]
 module = "tests"
 implicit_reexport = true
 
