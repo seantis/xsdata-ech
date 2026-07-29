@@ -32,3 +32,7 @@ repos:
         files: '^(src/.*|tests/.*)\.py$'
         additional_dependencies:
           - pytest>=7
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: v1.28.0
+    hooks:
+      - id: zizmor
